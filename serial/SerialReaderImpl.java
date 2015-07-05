@@ -1,4 +1,4 @@
-package discoverylab.telebot.master.core;
+package discoverylab.telebot.master.core.serial;
 
 import java.util.ArrayList;
 
@@ -7,7 +7,7 @@ import javax.swing.SwingUtilities;
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
 import jssc.SerialPortException;
-import discoverylab.telebot.master.core.CoreSerialReader;
+import discoverylab.telebot.master.core.serial.CoreSerialReader;
 
 /**
  * ArmSerialReader

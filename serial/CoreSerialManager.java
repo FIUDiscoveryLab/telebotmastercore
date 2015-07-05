@@ -1,4 +1,4 @@
-package discoverylab.telebot.master.core;
+package discoverylab.telebot.master.core.serial;
 
 import discoverylab.telebot.master.core.configurations.Config;
 import jssc.SerialPort;

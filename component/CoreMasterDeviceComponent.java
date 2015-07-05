@@ -1,4 +1,4 @@
-package discoverylab.telebot.master.core;
+package discoverylab.telebot.master.core.component;
 
 import static discoverylab.util.logging.LogUtils.*;
 import TelebotDDSCore.DDSCommunicator;
