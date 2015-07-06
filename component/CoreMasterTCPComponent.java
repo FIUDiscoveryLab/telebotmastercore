@@ -28,6 +28,7 @@ public abstract class CoreMasterTCPComponent {
 	InstanceHandle_t instance_handle 				= InstanceHandle_t.HANDLE_NIL;
 	
 	public CoreMasterTCPComponent(int portNumber){
+		LOGI(TAG, "Creating Core Server Socket");
 		serverSocket = new CoreServerSocket(portNumber);
 	}
 	

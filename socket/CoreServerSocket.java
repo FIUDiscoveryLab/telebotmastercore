@@ -49,6 +49,8 @@ public class CoreServerSocket {
                 try {
                     while (true) {
                         clientSocket = serverSocket.accept();
+                        clientSocket.setKeepAlive(true);
+                        System.out.println("Accepting CLIENT");
                         clientProcessingPool.submit(new ClientSocketTask(clientSocket));
                     }
                 } catch (IOException e) {
@@ -96,7 +98,6 @@ public class CoreServerSocket {
 		
 		return clientClosed && serverClosed;
 	}
-	
 	/**
 	 * Return CoreServerSocket CallbackInterface
 	 * @return callbackInterface
@@ -104,6 +105,7 @@ public class CoreServerSocket {
 	public CallbackInterface getCallbackInterface() {
 		return callbackInterface;
 	}
+	
 	
 	/**
 	 * Thread that takes care of ClientSocket connection
@@ -113,6 +115,9 @@ public class CoreServerSocket {
 	 */
 	private class ClientSocketTask implements Runnable {
         private final Socket clientSocket;
+        
+        StringBuilder 	message 			= 	new StringBuilder();
+    	Boolean 		receivingMessage 	= 	false;
         
         private ClientSocketTask(Socket clientSocket) {
         	this.clientSocket = clientSocket;
@@ -124,6 +129,7 @@ public class CoreServerSocket {
             LOGI(TAG, "Client Connected!");
             
             // Do whatever required to process the client's request
+            int clientMessageSize;
             String clientMessage;
             BufferedReader in = null;
             
@@ -131,6 +137,7 @@ public class CoreServerSocket {
             try {
 				in = new BufferedReader(
 				        new InputStreamReader(clientSocket.getInputStream()));
+				System.out.println("Getting Client InputStream");
 				LOGI(TAG, "Getting Client InputStream");
 			} catch (IOException e1) {
 				LOGE(TAG, "Error Getting Client InputStream");
@@ -139,13 +146,64 @@ public class CoreServerSocket {
             
             // STEP 2: Read line from ClientSocket until we have to close the connection 
             // 		   or the line is null
+            
             try {
-				while(!closeSocket && (clientMessage = in.readLine()) != null){
-					getCallbackInterface().callback(clientMessage);
-				}
-			} catch (IOException e1) {
-				e1.printStackTrace();
+            	while(true){
+                	char [] buffer = new char[1];
+//    				clientMessageSize = in.read();
+//                	System.out.println("CLIENT MESSAGE SIZE: " + clientMessageSize);
+//                	System.out.println("MESSAGE: " + buffer.toString());
+                	int buffSize = -1;
+                	
+//                	System.out.println("::::::::::::::");
+                	
+                	//if (buffer != null)
+                	if( (buffSize = in.read(buffer)) > 0)
+    				{	
+                	
+    					for (char b: buffer) {
+    						System.out.println("BUFFER: " +b);
+    		                if (b == '<') {
+    		                    receivingMessage = true;
+    		                    message.setLength(0);
+    		                }
+    		                else if (receivingMessage == true) {
+    		                    //if (b == '\r') {
+    		                	if (b == '>') {
+    		                        receivingMessage = false;
+    		                        System.out.println("MESSAGE: " + message.toString());
+//    		                        callbackInterface.callback(message.toString());
+    		                    }
+    		                    else {
+    		                    	System.out.println("APPEND: " + b);
+    		                        message.append((char)b);
+    		                        System.out.println("MESSAGE== " + message.toString());
+    		                    }
+    		                }
+    		            }
+                	
+    				}
+                	else {
+                		System.out.println("BUFF SIZE: " + buffSize);
+                	}
+                	
+//                	clientMessage = in.readLine();
+//    				System.out.println("CLIENT MESSAGE SIZE: " + clientMessage);
+            	}
+				
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
 			}
+            
+//            try {
+//				while(closeSocket != true && (clientMessage = in.readLine()) != null){
+//					System.out.println("DATA: " + clientMessage);
+//					getCallbackInterface().callback(clientMessage);
+//				}
+//			} catch (IOException e1) {
+//				e1.printStackTrace();
+//			}
 
             // STEP 3: Lastly, close the socket
             try {
