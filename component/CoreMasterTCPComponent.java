@@ -14,8 +14,9 @@ import com.rti.dds.publication.Publisher;
 import com.rti.dds.topic.Topic;
 
 import discoverylab.telebot.master.core.socket.CoreServerSocket;
+import discoverylab.telebot.master.core.socket.CoreServerSocket.SocketEventListener;
 
-public abstract class CoreMasterTCPComponent {
+public abstract class CoreMasterTCPComponent implements SocketEventListener {
 	
 	public static String TAG = makeLogTag("CoreMasterTCPComponent");
 
@@ -29,7 +30,7 @@ public abstract class CoreMasterTCPComponent {
 	
 	public CoreMasterTCPComponent(int portNumber){
 		LOGI(TAG, "Creating Core Server Socket");
-		serverSocket = new CoreServerSocket(portNumber);
+		serverSocket = new CoreServerSocket(portNumber, this);
 	}
 	
 	public void initiate(){

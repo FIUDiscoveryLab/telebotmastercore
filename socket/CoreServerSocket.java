@@ -16,16 +16,18 @@ import static discoverylab.util.logging.LogUtils.*;
  *
  */
 public class CoreServerSocket {
-	
+
 	public static String TAG = makeLogTag("CoreServerSocket");
 	
-	private CallbackInterface		callbackInterface;
+	private SocketEventListener		eventListener;
 	private ServerSocket			serverSocket;
 	private Socket					clientSocket;
 	
 	private boolean closeSocket = false;
 	
-	public CoreServerSocket(int port){
+	public CoreServerSocket(int port, SocketEventListener eventListener){
+		this.eventListener = eventListener;
+		
 		try {
 			serverSocket = new ServerSocket(port);
 			LOGI(TAG, "Waiting for clients...");
@@ -40,8 +42,8 @@ public class CoreServerSocket {
 	 * Without this the program blocks on:
 	 * 			.accept();
 	 */
-	public void startServer(){
-        final ExecutorService clientProcessingPool = Executors.newFixedThreadPool(10);
+	public void startServer() {
+        final ExecutorService clientProcessingPool = Executors.newFixedThreadPool(1);
 
         Runnable serverTask = new Runnable() {
             @Override
@@ -51,7 +53,8 @@ public class CoreServerSocket {
                         clientSocket = serverSocket.accept();
                         clientSocket.setKeepAlive(true);
                         System.out.println("Accepting CLIENT");
-                        clientProcessingPool.submit(new ClientSocketTask(clientSocket, callbackInterface));
+                        clientProcessingPool.submit(new ClientSocketTask(clientSocket, eventListener));
+//                        (new Thread(new ClientSocketTask(clientSocket, eventListener))).start();
                     }
                 } catch (IOException e) {
                 	LOGE(TAG, "Unable to process client request");
@@ -102,8 +105,8 @@ public class CoreServerSocket {
 	 * Return CoreServerSocket CallbackInterface
 	 * @return callbackInterface
 	 */
-	public CallbackInterface getCallbackInterface() {
-		return callbackInterface;
+	public SocketEventListener getCallbackInterface() {
+		return eventListener;
 	}
 	
 	
@@ -115,12 +118,12 @@ public class CoreServerSocket {
 	 */
 	private class ClientSocketTask implements Runnable {
         private final Socket clientSocket;
-        private final CallbackInterface callbackInterface;
+        private final SocketEventListener callbackInterface;
         
         StringBuilder 	message 			= 	new StringBuilder();
     	Boolean 		receivingMessage 	= 	false;
         
-        private ClientSocketTask(Socket clientSocket, final CallbackInterface callbackInterface) {
+        private ClientSocketTask(Socket clientSocket, final SocketEventListener callbackInterface) {
         	this.clientSocket = clientSocket;
         	this.callbackInterface = callbackInterface;
         }
@@ -164,16 +167,15 @@ public class CoreServerSocket {
 		                        receivingMessage = false;
 		                        System.out.println("MESSAGE: " + message.toString());
 		                        callbackInterface.callback(message.toString());
-		                        notify();
+//		                        getCallbackInterface().callback(message.toString());
 		                    }
 		                    else {
 		                        message.append((char)b);
 		                    }
 		                }
-		            }
-    				}                	
-//            	}
-				
+		            }              	
+            	}
+            	
 			} catch (IOException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
@@ -198,7 +200,7 @@ public class CoreServerSocket {
 	 * Purpose: Rendering socket line string
 	 *
 	 */
-	public interface CallbackInterface{
+	public interface SocketEventListener{
 		public void callback(String data);
 	}
 }
