@@ -16,6 +16,15 @@ import com.rti.dds.topic.Topic;
 import discoverylab.telebot.master.core.socket.CoreServerSocket;
 import discoverylab.telebot.master.core.socket.CoreServerSocket.SocketEventListener;
 
+/**
+ * CoreMasterTCPComponent
+ * Core class that handles Device Client to Server socket connection
+ * This is used when dealing with a device such as the YEI IMU, whose library is implemented in Python,
+ * but we can use a socket connection to connect locally and then use this core class to extend and implement
+ * the DDS writing logic
+ * @author Irvin Steve Cardenas
+ *
+ */
 public abstract class CoreMasterTCPComponent implements SocketEventListener {
 	
 	public static String TAG = makeLogTag("CoreMasterTCPComponent");

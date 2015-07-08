@@ -11,8 +11,13 @@ import java.util.concurrent.Executors;
 import static discoverylab.util.logging.LogUtils.*;
 
 /**
- * 
+ * CoreServerSocket
  * @author Irvin Steve Cardenas
+ * 
+ * Server Socket abstraction that deals with client socket connections in a non-blocking asynchronous manner.
+ * Has a Callback Interface - SocketEventListener.
+ * Classes that are interested in receiving client socket data can implement SocketEventListener
+ * 
  *
  */
 public class CoreServerSocket {
@@ -52,9 +57,8 @@ public class CoreServerSocket {
                     while (true) {
                         clientSocket = serverSocket.accept();
                         clientSocket.setKeepAlive(true);
-                        System.out.println("Accepting CLIENT");
+                        LOGI(TAG, "Client Connected");
                         clientProcessingPool.submit(new ClientSocketTask(clientSocket, eventListener));
-//                        (new Thread(new ClientSocketTask(clientSocket, eventListener))).start();
                     }
                 } catch (IOException e) {
                 	LOGE(TAG, "Unable to process client request");
@@ -142,7 +146,6 @@ public class CoreServerSocket {
             try {
 				in = new BufferedReader(
 				        new InputStreamReader(clientSocket.getInputStream()));
-				System.out.println("Getting Client InputStream");
 				LOGI(TAG, "Getting Client InputStream");
 			} catch (IOException e1) {
 				LOGE(TAG, "Error Getting Client InputStream");
