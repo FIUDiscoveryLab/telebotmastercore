@@ -58,7 +58,7 @@ public class CoreServerSocket {
                         clientSocket = serverSocket.accept();
                         clientSocket.setKeepAlive(true);
                         LOGI(TAG, "Client Connected");
-                        clientProcessingPool.submit(new ClientSocketTask(clientSocket, eventListener));
+                        clientProcessingPool.submit(new ClientSocketTask(clientSocket));
                     }
                 } catch (IOException e) {
                 	LOGE(TAG, "Unable to process client request");
@@ -122,20 +122,17 @@ public class CoreServerSocket {
 	 */
 	private class ClientSocketTask implements Runnable {
         private final Socket clientSocket;
-        private final SocketEventListener callbackInterface;
         
         StringBuilder 	message 			= 	new StringBuilder();
     	Boolean 		receivingMessage 	= 	false;
         
-        private ClientSocketTask(Socket clientSocket, final SocketEventListener callbackInterface) {
+        private ClientSocketTask(Socket clientSocket) {
         	this.clientSocket = clientSocket;
-        	this.callbackInterface = callbackInterface;
         }
 
         @Override
         public void run() {
-            System.out.println("Got a client !");
-            LOGI(TAG, "Client Connected!");
+            LOGI(TAG, "Got a Client!");
             
             // Do whatever required to process the client's request
             int clientMessageSize;
@@ -168,9 +165,9 @@ public class CoreServerSocket {
 		                    //if (b == '\r') {
 		                	if (b == '>') {
 		                        receivingMessage = false;
-		                        System.out.println("MESSAGE: " + message.toString());
-		                        callbackInterface.callback(message.toString());
-//		                        getCallbackInterface().callback(message.toString());
+		                        LOGI(TAG, "MESSAGE: " + message.toString());
+//		                        callbackInterface.callback(message.toString());
+		                        getCallbackInterface().callback(message.toString());
 		                    }
 		                    else {
 		                        message.append((char)b);
