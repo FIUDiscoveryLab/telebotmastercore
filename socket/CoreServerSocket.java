@@ -47,7 +47,9 @@ public class CoreServerSocket {
 	 * Without this the program blocks on:
 	 * 			.accept();
 	 */
-	public void startServer() {
+	public boolean startServer() {
+		
+		boolean serverStarted = false;
         final ExecutorService clientProcessingPool = Executors.newFixedThreadPool(1);
 
         Runnable serverTask = new Runnable() {
@@ -69,7 +71,8 @@ public class CoreServerSocket {
         
         Thread serverThread = new Thread(serverTask);
         serverThread.start();
-
+        serverStarted = true;
+        return serverStarted;
 	}
 	
 	/**

@@ -42,8 +42,8 @@ public abstract class CoreMasterTCPComponent implements SocketEventListener {
 		serverSocket = new CoreServerSocket(portNumber, this);
 	}
 	
-	public void initiate(){
-		serverSocket.startServer();
+	public boolean initiate(){
+		return serverSocket.startServer();
 	}
 	
 	
