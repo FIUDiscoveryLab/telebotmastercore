@@ -29,6 +29,7 @@ public class CoreServerSocket {
 	private Socket					clientSocket;
 	
 	private boolean closeSocket = false;
+	private boolean isConnected = false;
 	
 	public CoreServerSocket(int port, SocketEventListener eventListener){
 		this.eventListener = eventListener;
@@ -41,7 +42,6 @@ public class CoreServerSocket {
 			LOGE(TAG, "Error Creating ServerSocket with port: " + port);
 		}
 	}
-	
 	/**
 	 * Launch a Thread to check/wait for client to connect
 	 * Without this the program blocks on:
@@ -49,7 +49,6 @@ public class CoreServerSocket {
 	 */
 	public boolean startServer() {
 		
-		boolean serverStarted = false;
         final ExecutorService clientProcessingPool = Executors.newFixedThreadPool(1);
 
         Runnable serverTask = new Runnable() {
@@ -61,6 +60,7 @@ public class CoreServerSocket {
                         clientSocket.setKeepAlive(true);
                         LOGI(TAG, "Client Connected");
                         clientProcessingPool.submit(new ClientSocketTask(clientSocket));
+                        isConnected = true;
                     }
                 } catch (IOException e) {
                 	LOGE(TAG, "Unable to process client request");
@@ -71,8 +71,7 @@ public class CoreServerSocket {
         
         Thread serverThread = new Thread(serverTask);
         serverThread.start();
-        serverStarted = true;
-        return serverStarted;
+        return isConnected;
 	}
 	
 	/**

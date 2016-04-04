@@ -94,7 +94,7 @@ public abstract class CoreMasterTCPComponent implements SocketEventListener {
 		}
 		
 		//TODO Get assertion of Participant
-		return false;
+		return true;
 	}
 	
 	public DataWriterImpl getDataWriter() {
