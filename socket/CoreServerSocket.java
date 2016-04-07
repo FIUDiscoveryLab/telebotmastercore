@@ -168,7 +168,6 @@ public class CoreServerSocket {
 		                	if (b == '>') {
 		                        receivingMessage = false;
 		                        LOGI(TAG, "MESSAGE: " + message.toString());
-//		                        callbackInterface.callback(message.toString());
 		                        getCallbackInterface().callback(message.toString());
 		                    }
 		                    else {
@@ -176,6 +175,11 @@ public class CoreServerSocket {
 		                    }
 		                }
 		            }              	
+            	}
+            	
+            	if(closeSocket == true)
+            	{
+            		getCallbackInterface().callback("null");
             	}
             	
 			} catch (IOException e2) {
