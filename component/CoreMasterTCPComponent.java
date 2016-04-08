@@ -42,11 +42,14 @@ public abstract class CoreMasterTCPComponent implements SocketEventListener {
 		serverSocket = new CoreServerSocket(portNumber, this);
 	}
 	
-	public boolean initiate(){
-		return serverSocket.startServer();
+	public void initiate(){
+		serverSocket.startServer();
 	}
 	
-	
+	public boolean isConnected()
+	{
+		return serverSocket.isConnected();
+	}
 	/**
 	 * Initiate DDS Protocol
 	 * @return

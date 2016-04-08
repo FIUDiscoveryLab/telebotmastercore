@@ -47,7 +47,7 @@ public class CoreServerSocket {
 	 * Without this the program blocks on:
 	 * 			.accept();
 	 */
-	public boolean startServer() {
+	public void startServer() {
 		
         final ExecutorService clientProcessingPool = Executors.newFixedThreadPool(1);
 
@@ -60,7 +60,7 @@ public class CoreServerSocket {
                         clientSocket.setKeepAlive(true);
                         LOGI(TAG, "Client Connected");
                         clientProcessingPool.submit(new ClientSocketTask(clientSocket));
-                        isConnected = true;
+//                        isConnected = true;
                     }
                 } catch (IOException e) {
                 	LOGE(TAG, "Unable to process client request");
@@ -71,7 +71,7 @@ public class CoreServerSocket {
         
         Thread serverThread = new Thread(serverTask);
         serverThread.start();
-        return isConnected;
+//        return isConnected;
 	}
 	
 	/**
@@ -115,7 +115,10 @@ public class CoreServerSocket {
 		return eventListener;
 	}
 	
-	
+	public boolean isConnected()
+	{
+		return isConnected;
+	}
 	/**
 	 * Thread that takes care of ClientSocket connection
 	 * In this case we feed 
@@ -135,7 +138,7 @@ public class CoreServerSocket {
         @Override
         public void run() {
             LOGI(TAG, "Got a Client!");
-            
+            isConnected = true;
             // Do whatever required to process the client's request
             int clientMessageSize;
             String clientMessage;
