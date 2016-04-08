@@ -103,8 +103,6 @@ public class CoreServerSocket {
 			}
 		}
 		
-		closeSocket = true;
-		
 		return clientClosed && serverClosed;
 	}
 	/**
@@ -188,6 +186,7 @@ public class CoreServerSocket {
             // STEP 3: Lastly, close the socket
             try {
                 clientSocket.close();
+                closeSocket = true;
                 LOGI(TAG, "Closing Client Socket");
             } catch (IOException e) {
             	LOGI(TAG, "ERROR Closing Client Socket");
