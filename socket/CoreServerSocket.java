@@ -180,11 +180,6 @@ public class CoreServerSocket {
 		            }              	
             	}
             	
-            	if(closeSocket == true)
-            	{
-            		getCallbackInterface().callback("null");
-            	}
-            	
 			} catch (IOException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
@@ -198,6 +193,11 @@ public class CoreServerSocket {
             	LOGI(TAG, "ERROR Closing Client Socket");
                 e.printStackTrace();
             }
+            
+        	if(closeSocket == true)
+        	{
+        		getCallbackInterface().callback("null");
+        	}
         }
     }
 	
