@@ -30,24 +30,36 @@ public class CoreServerSocket {
 	
 	private boolean closeSocket = false;
 	private boolean isConnected = false;
+	private boolean serverLaunched = false;
 	
 	public CoreServerSocket(int port, SocketEventListener eventListener){
 		this.eventListener = eventListener;
 		
 		try {
 			serverSocket = new ServerSocket(port);
+			serverLaunched = true;
 			LOGI(TAG, "Waiting for clients...");
 		} catch (IOException e) {
 			e.printStackTrace();
 			LOGE(TAG, "Error Creating ServerSocket with port: " + port);
 		}
 	}
+	
+	public boolean serverLaunched()
+	{
+		return serverLaunched;
+	}
+	
+	public boolean isConnected()
+	{
+		return isConnected;
+	}
 	/**
 	 * Launch a Thread to check/wait for client to connect
 	 * Without this the program blocks on:
 	 * 			.accept();
 	 */
-	public boolean startServer() {
+	public void startServer() {
 		
         final ExecutorService clientProcessingPool = Executors.newFixedThreadPool(1);
 
@@ -71,7 +83,6 @@ public class CoreServerSocket {
         
         Thread serverThread = new Thread(serverTask);
         serverThread.start();
-        return isConnected;
 	}
 	
 	/**
