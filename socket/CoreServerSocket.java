@@ -72,7 +72,6 @@ public class CoreServerSocket {
                         clientSocket.setKeepAlive(true);
                         LOGI(TAG, "Client Connected");
                         clientProcessingPool.submit(new ClientSocketTask(clientSocket));
-                        isConnected = true;
                     }
                 } catch (IOException e) {
                 	LOGE(TAG, "Unable to process client request");
@@ -115,7 +114,6 @@ public class CoreServerSocket {
 		}
 		
 		closeSocket = true;
-		
 		return clientClosed && serverClosed;
 	}
 	/**
@@ -146,7 +144,7 @@ public class CoreServerSocket {
         @Override
         public void run() {
             LOGI(TAG, "Got a Client!");
-            
+            isConnected = true;
             // Do whatever required to process the client's request
             int clientMessageSize;
             String clientMessage;
@@ -188,11 +186,6 @@ public class CoreServerSocket {
 		            }              	
             	}
             	
-            	if(closeSocket == true)
-            	{
-            		getCallbackInterface().callback("null");
-            	}
-            	
 			} catch (IOException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
@@ -201,7 +194,9 @@ public class CoreServerSocket {
             // STEP 3: Lastly, close the socket
             try {
                 clientSocket.close();
+                getCallbackInterface().callback("closed");
                 LOGI(TAG, "Closing Client Socket");
+                isConnected = false;
             } catch (IOException e) {
             	LOGI(TAG, "ERROR Closing Client Socket");
                 e.printStackTrace();
